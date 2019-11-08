@@ -1,13 +1,8 @@
-# nodejs-template
+# rollup-plugin-glob
 
-## Startup
+Warning:  Not published on npm.
 
-```sh
-npx degit Vehmloewff/nodejs-template#typescript nodejs-app
-# or the javascript branch
-cd nodejs-app
-npm i
-```
+This repo has be depreciated in favor of [`TehShrike/glob-module-file`](https://github.com/TehShrike/glob-module-file).
 
 ## Running the tests
 
@@ -21,15 +16,11 @@ npm test -- -w
 
 ## Linting
 
-This template uses a combination of `prettier` and `eslint`.
-
 ```sh
 npm run lint
 # or
 npm run lint:test
 ```
-
-If you need `eslint` or `prettier` to ignore a file, just add it to the `.eslintignore` or `.prettierignore`.
 
 ## License
 
