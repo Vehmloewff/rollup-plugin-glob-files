@@ -8,9 +8,14 @@ export default {
 		format: 'esm',
 	},
 	plugins: [
-		plugin({
-			file: `globbed.ts`,
-		}),
+		plugin([
+			{
+				file: `globbed.ts`,
+				globStar: true,
+				include: [`./fixture/**`],
+				exclude: [`./**/*ignore*.ts`],
+			},
+		]),
 		typescript({
 			typescript: require('typescript'),
 		}),

@@ -4,6 +4,7 @@ import { createFilter } from 'rollup-pluginutils';
 import getFiles from 'simply-get-files';
 import write from 'write';
 import nodePath from 'path';
+import asyncForEach from './async-for-each';
 
 export type Resolver = (opts: ResolverOptions) => Promise<ResolverResult> | ResolverResult;
 export type ResolverResult = {
@@ -19,94 +20,72 @@ export type ResolverOptions = {
 
 export type GlobOptions = {
 	file: string;
-	include?: string[];
-	exclude?: string[];
-	resolve?: Resolver | 'import' | 'import-default-call' | 'import-default-call-async';
+	include?: string[] | string;
+	exclude?: string[] | string;
+	commonjs?: boolean;
+	globStar?: boolean;
+	justImport?: boolean;
 };
 
-export default (options: GlobOptions): Plugin => ({
-	name: `glob`,
-	resolveId: async function(id) {
-		if (!options) return this.error(`options must be passed.`);
-		if (!options.file) return this.error(`options.file is required.`);
+export default (options: GlobOptions[] | GlobOptions): Plugin => {
+	let optionsArr: GlobOptions[] = [];
 
-		if (id !== options.file) return null;
+	if (Array.isArray(options)) optionsArr = options;
+	else optionsArr[0] = options;
 
-		const file = await read(id);
+	return {
+		name: `glob`,
+		resolveId: async function(id) {
+			await asyncForEach(optionsArr, async (options: GlobOptions) => {
+				if (!options) return this.error(`options must be passed.`);
+				if (!options.file) return this.error(`options.file is required.`);
 
-		if (file === null) {
-			await write(id, ``);
+				if (id !== options.file) return null;
 
-			this.emitFile({
-				id,
-				type: `chunk`,
+				const file = await read(id);
+
+				if (file === null) {
+					await write(id, ``);
+
+					this.emitFile({
+						id,
+						type: `chunk`,
+					});
+				}
 			});
-		}
 
-		return null;
-	},
-	transform: async function(code, id) {
-		if (id !== nodePath.resolve(options.file)) return null;
+			return null;
+		},
+		transform: async function(code, id) {
+			const options = optionsArr.find(opt => nodePath.resolve(opt.file) === id);
+			if (!options) return null;
 
-		if (typeof options.resolve === 'string') {
-			if (options.resolve === 'import') options.resolve = importResolver;
-			else if (options.resolve === 'import-default-call') options.resolve = importDefaultCallResolver;
-			else if (options.resolve === 'import-default-call-async') options.resolve = importDefaultCallAsyncResolver;
-			else return this.error(`Invalid string passed to 'options.resolve'`);
-		}
+			const filter = createFilter(options.include || [], options.exclude || []);
+			const allFiles = await getFiles(process.cwd());
+			const files = allFiles.filter(file => {
+				return filter(nodePath.resolve(file)) && file != options.file && file != `rollup.config.js`;
+			});
+			const filesToGlob = files.map(name => `./${name}`);
 
-		const filter = createFilter(options.include || [], options.exclude || []);
-		const allFiles = await getFiles(process.cwd());
-		const files = allFiles.filter(file => {
-			return filter(nodePath.resolve(file)) && file != options.file && file != `rollup.config.js`;
-		});
-		const filesToGlob = files.map(name => ({ name, path: `./${name}` }));
+			let imports = ``;
+			let body = ``;
 
-		const resolver = () => {
-			if (!options.resolve) return importResolver;
-			if (typeof options.resolve === 'function') return options.resolve;
-			if (options.resolve === 'import') return importResolver;
-			if (options.resolve === 'import-default-call') return importDefaultCallResolver;
-			if (options.resolve === 'import-default-call-async') return importDefaultCallAsyncResolver;
-			this.error(`Invalid string passed to 'options.resolve'`);
-		};
+			if (!options.justImport) body += `export default [\n`;
 
-		const result = await resolver()({
-			code,
-			filesToGlob,
-		});
+			filesToGlob.forEach((file, index) => {
+				if (options.justImport) {
+					imports += `import '${file}';\n`;
+				} else {
+					imports += options.globStar
+						? `import * as glob$file${index} from '${file}';\n`
+						: `import glob$file${index} from '${file}';\n`;
+					body += `	glob$file${index},\n`;
+				}
+			});
 
-		return { code: result.code };
-	},
-});
+			if (!options.justImport) body += `];`;
 
-export const importResolver: Resolver = ({ code, filesToGlob }) => {
-	filesToGlob.forEach(file => {
-		code += `import "${file.path}";`;
-	});
-
-	return { code };
-};
-
-export const importDefaultCallResolver: Resolver = ({ code, filesToGlob }) => {
-	filesToGlob.forEach((file, index) => {
-		const fileName = `_file${index}`;
-
-		code += `import ${fileName} from "${file.path}";\n${fileName}();\n`;
-	});
-	return { code };
-};
-
-export const importDefaultCallAsyncResolver: Resolver = ({ code, filesToGlob }) => {
-	code += `(async function(){`;
-
-	filesToGlob.forEach((file, index) => {
-		const fileName = `_file${index}`;
-
-		code += `	import ${fileName} from "${file.path}";\nawait ${fileName}();\n`;
-	});
-
-	code += `}());`;
-
-	return { code };
+			return { code: imports + `\n\n` + body + `\n\n` + code };
+		},
+	};
 };

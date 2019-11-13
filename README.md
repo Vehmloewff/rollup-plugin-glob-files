@@ -1,6 +1,6 @@
 # rollup-plugin-glob
 
-Warning:  Not published on npm.
+Warning: Not published on npm.
 
 This repo has be depreciated in favor of [`TehShrike/glob-module-file`](https://github.com/TehShrike/glob-module-file).
 
