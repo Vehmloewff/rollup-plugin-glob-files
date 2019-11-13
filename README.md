@@ -1,4 +1,4 @@
-# rollup-plugin-glob
+# rollup-plugin-glob-files
 
 Import files matching a glob pattern and export them as an array.
 
