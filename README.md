@@ -1,6 +1,6 @@
 # rollup-plugin-glob
 
-Import files matching a glob, and export them as an array.
+Import files matching a glob pattern and export them as an array.
 
 ## Usage
 
