@@ -11,7 +11,7 @@ export default {
 		plugin([
 			{
 				file: `globbed.ts`,
-				globStar: true,
+				importStar: true,
 				include: [`./fixture/**`],
 				exclude: [`./**/*ignore*.ts`],
 			},

@@ -22,8 +22,7 @@ export type GlobOptions = {
 	file: string;
 	include?: string[] | string;
 	exclude?: string[] | string;
-	commonjs?: boolean;
-	globStar?: boolean;
+	importStar?: boolean;
 	justImport?: boolean;
 };
 
@@ -76,7 +75,7 @@ export default (options: GlobOptions[] | GlobOptions): Plugin => {
 				if (options.justImport) {
 					imports += `import '${file}';\n`;
 				} else {
-					imports += options.globStar
+					imports += options.importStar
 						? `import * as glob$file${index} from '${file}';\n`
 						: `import glob$file${index} from '${file}';\n`;
 					body += `	glob$file${index},\n`;

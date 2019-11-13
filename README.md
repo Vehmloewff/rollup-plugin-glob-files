@@ -1,26 +1,40 @@
 # rollup-plugin-glob
 
-Warning: Not published on npm.
+Import files matching a glob, and export them as an array.
 
-This repo has be depreciated in favor of [`TehShrike/glob-module-file`](https://github.com/TehShrike/glob-module-file).
-
-## Running the tests
-
-To run `test.js`:
+## Usage
 
 ```sh
-npm test
-# or
-npm test -- -w
+npm i rollup-plugin-glob-files -D
 ```
 
-## Linting
+```js
+// rollup.plugin.js
+import globFiles from 'rollup-plugin-glob-files';
 
-```sh
-npm run lint
-# or
-npm run lint:test
+export default {
+	// ...
+	plugins: [
+		// rollup-plugin-glob-copy should be first
+		// because it just generates a valid es5 file.
+		globFiles(options),
+	],
+};
 ```
+
+### options: GlobOptions | GlobOptions[]
+
+-   `GlobOptions` is an object which contains the following. All of the paramaters are optional except for `file`.
+
+    -   `file`: _(required)_: The location of the file that is to contain all of the import code.
+
+    -   `include`: This can be a single [minimatch glob pattern](https://github.com/isaacs/minimatch#minimatch), or an array of them. Default is `./**`.
+
+    -   `exclude`: Same as `include`, except, of course, it excludes the files. Default is `./**/node_modules/**`
+
+    -   `importStar`: Whether to use `import * as something from 'other'` in place of `import something from 'other'`. Default is `false`.
+
+    -   `justImport`: If the files should just be imported. Instead of `import something from 'other'`, it just does this: `import 'other'`.
 
 ## License
 
