@@ -2,5 +2,6 @@ node_modules
 .eslintignore
 .gitignore
 .prettierignore
+typings
 LICENSE
 dist

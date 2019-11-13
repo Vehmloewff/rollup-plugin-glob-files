@@ -59,7 +59,7 @@ export default (options: GlobOptions[] | GlobOptions): Plugin => {
 			const options = optionsArr.find(opt => nodePath.resolve(opt.file) === id);
 			if (!options) return null;
 
-			const filter = createFilter(options.include || [], options.exclude || []);
+			const filter = createFilter(options.include || `./**`, options.exclude || `./**/node_modules/**`);
 			const allFiles = await getFiles(process.cwd());
 			const files = allFiles.filter(file => {
 				return filter(nodePath.resolve(file)) && file != options.file && file != `rollup.config.js`;
