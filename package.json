@@ -7,7 +7,7 @@
 	"typings": "typings/index.d.ts",
 	"scripts": {
 		"build": "rollup -c && tsc",
-		"test": "rollup -c && cd test && rollup -cw",
+		"test": "rollup -c && cd test && rollup -c",
 		"lint": "prettier --write \"./**\"",
 		"lint:test": "prettier --check \"./**\"",
 		"preversion": "npm run test && npm run lint:test && npm run build",
