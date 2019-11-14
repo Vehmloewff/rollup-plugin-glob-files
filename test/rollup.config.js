@@ -13,7 +13,7 @@ export default {
 				file: `globbed.ts`,
 				importStar: true,
 				include: [`./fixture/**`],
-				exclude: [`./**/*ignore*.ts`],
+				exclude: [`./**/*ignore*.ts`, `./**/node_modules/**`],
 			},
 		]),
 		typescript({

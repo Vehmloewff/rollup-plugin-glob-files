@@ -6,8 +6,8 @@
 	"module": "dist/build.esm.js",
 	"typings": "typings/index.d.ts",
 	"scripts": {
-		"build": "cross-env NODE_ENV=production rollup -c && tsc",
-		"test": "cross-env NODE_ENV=development rollup -c",
+		"build": "rollup -c && tsc",
+		"test": "rollup -c && cd test && rollup -cw",
 		"lint": "prettier --write \"./**\"",
 		"lint:test": "prettier --check \"./**\"",
 		"preversion": "npm run test && npm run lint:test && npm run build",
@@ -30,19 +30,17 @@
 	],
 	"license": "MIT",
 	"devDependencies": {
-		"@types/micromatch": "^3.1.0",
+		"@types/micromatch": "^3.1.1",
+		"@types/write": "^2.0.0",
 		"acorn": "^7.1.0",
-		"cross-env": "^6.0.3",
-		"prettier": "^1.18.2",
-		"rollup": "^1.26.3",
-		"rollup-plugin-command": "^1.0.7",
+		"prettier": "^1.19.1",
+		"rollup": "^1.27.0",
 		"rollup-plugin-commonjs": "^10.1.0",
 		"rollup-plugin-node-resolve": "^5.2.0",
 		"rollup-plugin-typescript": "^1.0.1",
 		"tslib": "^1.10.0",
 		"typescript": "^3.7.2",
-		"zip-tap": "^1.0.2",
-		"@types/write": "^2.0.0"
+		"zip-tap": "^1.0.4"
 	},
 	"homepage": "https://github.com/Vehmloewff/rollup-plugin-glob",
 	"repository": {
@@ -51,7 +49,7 @@
 	},
 	"dependencies": {
 		"rollup-pluginutils": "^2.8.2",
-		"simply-get-files": "^1.0.1",
+		"simply-get-files": "^1.0.2",
 		"write": "^2.0.0"
 	},
 	"peerDependencies": {

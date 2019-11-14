@@ -26,11 +26,52 @@ export type GlobOptions = {
 	justImport?: boolean;
 };
 
+let watchFiles: string[] = [];
+
+const generateCode = async (options: GlobOptions) => {
+	const filter = createFilter(options.include, options.exclude);
+	const allFiles = await getFiles(process.cwd());
+	const files = allFiles.filter(file => {
+		return filter(nodePath.resolve(file)) && file != options.file && file != `rollup.config.js`;
+	});
+	const filesToGlob = files.map(name => nodePath.resolve(name));
+
+	let imports = ``;
+	let body = ``;
+
+	if (!options.justImport) body += `export default [\n`;
+
+	watchFiles = [];
+
+	filesToGlob.forEach((file, index) => {
+		watchFiles.push(file);
+
+		if (options.justImport) {
+			imports += `import '${file}';\n`;
+		} else {
+			imports += options.importStar
+				? `import * as glob$file${index} from '${file}';\n`
+				: `import glob$file${index} from '${file}';\n`;
+			body += `	glob$file${index},\n`;
+		}
+	});
+
+	if (!options.justImport) body += `];`;
+
+	return imports + `\n\n` + body;
+};
+
 export default (options: GlobOptions[] | GlobOptions): Plugin => {
 	let optionsArr: GlobOptions[] = [];
 
 	if (Array.isArray(options)) optionsArr = options;
 	else optionsArr[0] = options;
+
+	optionsArr.map(options => {
+		if (!options.include) options.include = `./**`;
+		if (!options.exclude) options.exclude = `./**/node_modules/**`;
+		return options;
+	});
 
 	return {
 		name: `glob`,
@@ -59,32 +100,14 @@ export default (options: GlobOptions[] | GlobOptions): Plugin => {
 			const options = optionsArr.find(opt => nodePath.resolve(opt.file) === id);
 			if (!options) return null;
 
-			const filter = createFilter(options.include || `./**`, options.exclude || `./**/node_modules/**`);
-			const allFiles = await getFiles(process.cwd());
-			const files = allFiles.filter(file => {
-				return filter(nodePath.resolve(file)) && file != options.file && file != `rollup.config.js`;
-			});
-			const filesToGlob = files.map(name => `./${name}`);
+			code = await generateCode(options);
 
-			let imports = ``;
-			let body = ``;
+			watchFiles.forEach(file => this.addWatchFile(file));
 
-			if (!options.justImport) body += `export default [\n`;
-
-			filesToGlob.forEach((file, index) => {
-				if (options.justImport) {
-					imports += `import '${file}';\n`;
-				} else {
-					imports += options.importStar
-						? `import * as glob$file${index} from '${file}';\n`
-						: `import glob$file${index} from '${file}';\n`;
-					body += `	glob$file${index},\n`;
-				}
-			});
-
-			if (!options.justImport) body += `];`;
-
-			return { code: imports + `\n\n` + body + `\n\n` + code };
+			return { code };
+		},
+		generateBundle: () => {
+			watchFiles = [];
 		},
 	};
 };
