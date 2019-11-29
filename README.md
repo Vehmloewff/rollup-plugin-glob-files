@@ -2,6 +2,8 @@
 
 Import files matching a glob pattern and export them as an array.
 
+This plugin works similar to webpack's `require.context` or `require.ensure`, but for rollup.
+
 ## Usage
 
 ```sh
