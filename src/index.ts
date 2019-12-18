@@ -34,12 +34,7 @@ const generateCode = async (options: GlobOptions) => {
 	const files = allFiles.filter(file => {
 		return filter(nodePath.resolve(file)) && file != options.file && file != `rollup.config.js`;
 	});
-	const filesToGlob = files.map(name => {
-		console.log(name);
-		const res = nodePath.resolve(name).replace(/\\/g, '/');
-		console.log(res);
-		return res;
-	});
+	const filesToGlob = files.map(name => nodePath.resolve(name).replace(/\\/g, '/'));
 
 	let imports = ``;
 	let body = ``;
