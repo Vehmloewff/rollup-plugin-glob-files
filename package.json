@@ -9,7 +9,7 @@
 		"build": "rollup -c && tsc",
 		"test": "rollup -c && cd test && rollup -c",
 		"lint": "prettier --write \"./**\"",
-		"lint:test": "prettier --check \"./**\"",
+		"lint:test": "prettier --check --loglevel=debug \"./**\"",
 		"preversion": "npm run test && npm run lint:test && npm run build",
 		"prepublishOnly": "npm run build",
 		"postversion": "git push && git push --tags && rm -rf build/temp && npm publish"
