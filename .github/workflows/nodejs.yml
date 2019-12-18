@@ -20,7 +20,7 @@ jobs:
             - name: test
               run: |
                   npm install
-                  npm test
                   ./node_modules/.bin/rollup -c
+                  npm test
               env:
                   CI: true
