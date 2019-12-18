@@ -23,5 +23,6 @@ jobs:
                   npm test
                   npm run lint:test
                   npm run build
+                  npm run lint
               env:
                   CI: true
