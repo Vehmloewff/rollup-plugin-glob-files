@@ -36,7 +36,7 @@ const generateCode = async (options: GlobOptions) => {
 	});
 	const filesToGlob = files.map(name => {
 		console.log(name);
-		const res = nodePath.resolve(name);
+		const res = nodePath.resolve(name).replace(/\\/g, '/');
 		console.log(res);
 		return res;
 	});
