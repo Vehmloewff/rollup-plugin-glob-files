@@ -17,8 +17,6 @@ import globFiles from 'rollup-plugin-glob-files';
 export default {
 	// ...
 	plugins: [
-		// rollup-plugin-glob-copy should be first
-		// because it just generates a valid es5 file.
 		globFiles(options),
 	],
 };
