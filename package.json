@@ -1,6 +1,6 @@
 {
 	"name": "rollup-plugin-glob-files",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Import files matching a glob pattern and export them as an array",
 	"main": "dist/build.cjs.js",
 	"module": "dist/build.esm.js",
