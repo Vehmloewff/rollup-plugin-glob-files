@@ -20,11 +20,15 @@ export default {
 };
 ```
 
-### options: GlobOptions | GlobOptions[]
+### options: GlobOptions
 
 -   `GlobOptions` is an object which contains the following. All of the paramaters are optional except for `file`.
 
-    -   `file`: _(required)_: The location of the file that is to contain all of the import code.
+    -   `key`: _(required)_: This can be anything. Just remember to import by this key. If, for example, this was set to `@awesome`, you would:
+
+        ```ts
+        import someArray from '@awesome';
+        ```
 
     -   `include`: This can be a single [minimatch glob pattern](https://github.com/isaacs/minimatch#minimatch), or an array of them. Default is `./**`.
 
