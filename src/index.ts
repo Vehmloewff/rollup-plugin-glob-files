@@ -74,8 +74,6 @@ export default (options: GlobOptions): Plugin => {
 
 			const code = await generateCode(options);
 
-			console.log(code, path);
-
 			return { code };
 		},
 	};
