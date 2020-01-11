@@ -16,9 +16,7 @@ import globFiles from 'rollup-plugin-glob-files';
 
 export default {
 	// ...
-	plugins: [
-		globFiles(options),
-	],
+	plugins: [globFiles(options)],
 };
 ```
 
