@@ -2,20 +2,18 @@ import plugin from '..';
 import typescript from 'rollup-plugin-typescript';
 
 export default {
-	input: 'globbed.ts',
+	input: '@awesome',
 	output: {
 		file: '../dist/test.js',
 		format: 'esm',
 	},
 	plugins: [
-		plugin([
-			{
-				file: `globbed.ts`,
-				importStar: true,
-				include: [`./fixture/**`],
-				exclude: [`./**/*ignore*.ts`, `./**/node_modules/**`],
-			},
-		]),
+		plugin({
+			key: `@awesome`,
+			importStar: true,
+			include: [`./fixture/**`],
+			exclude: [`./**/*ignore*.ts`, `./**/node_modules/**`],
+		}),
 		typescript({
 			typescript: require('typescript'),
 		}),
