@@ -1,3 +1,5 @@
+> Maintainers wanted! Contact me if interested (vehmloewff@gmail.com).
+
 # rollup-plugin-glob-files
 
 Import files matching a glob pattern and export them as an array.
